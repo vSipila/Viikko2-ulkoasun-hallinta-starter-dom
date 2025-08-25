@@ -1,0 +1,14 @@
+{
+  "name": "week2-starter-playwright-dom",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:json": "playwright test --reporter=json > results.json || true",
+    "test:html": "playwright test --reporter=html || true"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "http-server": "^14.1.1"
+  }
+}

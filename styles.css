@@ -1,0 +1,10 @@
+/* Täydennä tehtävää varten: jätetty tarkoituksella vajaaksi */
+html, body { height: 100%; }
+body { margin: 0; }
+
+.container { /* Lisää max-width: <n>ch; margin: 0 auto; padding: ... */ }
+
+.title { color: #333; }
+/* Lisää .title.strong niin, että tyyli poikkeaa .title:stä */
+
+.box { /* Lisää margin, padding ja border > 0 */ }
