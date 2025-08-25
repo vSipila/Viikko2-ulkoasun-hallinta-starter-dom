@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-test('T4: .container — max-width ch, margin: 0 auto, padding > 0 (CSSOM)', async ({ page }) => {
+test('T4: .container — max-width ch, keskitys marginaaleilla, padding > 0 (CSSOM + computed)', async ({ page }) => {
   await page.goto('/');
-  // 1) löydä viimeinen .container-sääntö ja tarkista että max-width käyttää ch-yksikköä
+
+  // 1) max-width on määritetty ch-yksiköllä CSS-säännössä
   const hasCh = await page.evaluate(() => {
     let value = '';
     for (const ss of Array.from(document.styleSheets)) {
@@ -13,22 +14,26 @@ test('T4: .container — max-width ch, margin: 0 auto, padding > 0 (CSSOM)', asy
             if (v) value = v.trim(); // viimeisin voittaa
           }
         }
-      } catch(e) {}
+      } catch (e) { /* ignore cross-origin */ }
     }
     return /\d+\s*ch\b/i.test(value);
   });
   expect(hasCh).toBeTruthy();
 
-  // 2) margin auto + padding > 0 (computed)
+  // 2) Keskitys ja padding > 0 lasketuista arvoista
   const ok = await page.evaluate(() => {
     const el = document.querySelector('.container');
     if (!el) return false;
     const cs = getComputedStyle(el);
-    const ml = cs.marginLeft, mr = cs.marginRight;
+    const ml = parseFloat(cs.marginLeft || '0');
+    const mr = parseFloat(cs.marginRight || '0');
+    const centered = Math.abs(ml - mr) < 0.5 && ml > 0 && mr > 0;
+
     const paddingSum = ['Top','Right','Bottom','Left']
       .map(k => parseFloat(cs['padding' + k] || '0'))
-      .reduce((a,b)=>a+b,0);
-    return ml === 'auto' && mr === 'auto' && paddingSum > 0;
+      .reduce((a, b) => a + b, 0);
+
+    return centered && paddingSum > 0;
   });
   expect(ok).toBeTruthy();
 });
